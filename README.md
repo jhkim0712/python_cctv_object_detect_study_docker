@@ -13,7 +13,16 @@
 - YOLO 모델 파일(`*.pt`)은 크기때문에 git에 포함시키지 않음.
 - 여러 모델을 테스트 해본 결과 현재 영상에서는 YOLO11이 가장 탐지가 잘되었음.
 
+## Docker 컨테이너
+```
+mkdir -p output
+docker build -t cctv-object-detect_docker .
+docker run -d --name cctv-object-detect_docker -p 8080:8080 -v $(pwd)/output:/output cctv-object-detect_docker
+
+```
 
 ## 스크린샷
+
+[![image.png](https://i.postimg.cc/rmchsnMJ/image.png)](https://postimg.cc/wtf5bkty)
 
 [![2025-08-29-11-02-43.gif](https://i.postimg.cc/ZRpC7Hd1/2025-08-29-11-02-43.gif)](https://postimg.cc/0M5krpZf)
