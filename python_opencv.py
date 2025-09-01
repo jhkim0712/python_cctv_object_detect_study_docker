@@ -14,10 +14,12 @@ def main(output_dir):
     os.makedirs(output_dir, exist_ok=True)
     last_saved_second = None
     while True:
+        frame_capture_time = datetime.now()
         ret, frame = cap.read()
         if not ret:
             print("Error: Could not read frame from stream.")
             break
+        processing_start = datetime.now()
         results = model(frame, stream=True)
         for result in results:
             for box in result.boxes:
@@ -34,6 +36,18 @@ def main(output_dir):
                         color = (0, 255, 0)  # Green
                     cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
                     cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+                    
+        processing_end = datetime.now()
+        # Calculate and print processing time
+        capture_str = f"Frame Capture: {frame_capture_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}"
+        processing_str = f"Processing Time: {(processing_end - processing_start).total_seconds():.3f}s"
+        text = f"{capture_str} | {processing_str}"
+        text_size, _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
+        text_x = 10
+        text_y = frame.shape[0] - 10
+        cv2.rectangle(frame, (0, frame.shape[0] - text_size[1] - 20), (frame.shape[1], frame.shape[0]), (0,0,0), -1)
+        cv2.putText(frame, text, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2)
+
         # Save one image per second, keep only 60 images
         now = datetime.now()
         current_second = now.strftime('%Y%m%d_%H%M%S')
