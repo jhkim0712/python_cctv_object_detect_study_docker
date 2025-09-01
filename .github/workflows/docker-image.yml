@@ -6,6 +6,9 @@ on:
   push:
     branches: [ "main" ]
 
+permissions:
+  contents: write # 릴리스 생성 및 아티팩트 업로드 권한을 부여합니다.
+
 jobs:
   build:
     runs-on: ubuntu-latest
