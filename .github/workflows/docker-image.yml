@@ -6,9 +6,6 @@ on:
   push:
     branches: [ "main" ]
 
-permissions:
-  contents: write # 릴리스 생성 및 아티팩트 업로드 권한을 부여합니다.
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,21 +23,8 @@ jobs:
       - name: Save Docker image to tar file
         run: docker save cctv-object-detect_docker:${{ env.TAG }} -o cctv-object-detect_docker.tar
 
-      - name: Create a new release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Upload Docker image as an artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: v${{ env.TAG }}
-          release_name: Release v${{ env.TAG }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Docker image as a release asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./cctv-object-detect_docker.tar
-          asset_name: cctv-object-detect_docker-${{ env.TAG }}.tar
-          asset_content_type: application/gzip
+          name: cctv-object-detect-docker-image
+          path: cctv-object-detect_docker.tar
